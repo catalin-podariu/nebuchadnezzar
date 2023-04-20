@@ -7,7 +7,6 @@ build/
 
 # Compiled files
 out/
-build/
 
 # Gradle wrapper
 gradle/wrapper/gradle-wrapper.jar
