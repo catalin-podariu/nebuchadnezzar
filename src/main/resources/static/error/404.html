@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Page Not Found</title>
+    <style>
+		body {
+			margin: 0;
+			padding: 0;
+			font-family: Ubuntu, sans-serif;
+			user-select: none;
+            user-drag: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -html-user-select: none;
+            -ms-user-select:none;
+            -webkit-user-drag: none;
+            background-color: black;
+            text-align: center
+		}
+		.container {
+			max-width: 600px;
+			margin: 0 auto;
+			text-align: center;
+			padding-top: 0px;
+		}
+		h1 {
+			font-size: 196px;
+			color: #444;
+			margin-bottom: 0px;
+		}
+		p {
+			font-size: 24px;
+			color: #777;
+			margin-top: 0;
+		}
+		#timer {
+			font-size: 16px;
+			margin-top: 20px;
+		}
+		.green {
+			color: green;
+		}
+		.yellow {
+			color: yellow;
+		}
+		.red {
+			color: #cc0000;
+		}
+		pre {
+			font-family: "Lucida Console", Monaco, monospace;
+			font-size: 12px;
+			white-space: pre-wrap;
+			text-align: left;
+			margin: 20px auto 0;
+			padding: 10px;
+			background-color: #111;
+			color: #666;
+			border-radius: 5px;
+			max-width: 600px;
+		}
+	</style>
+</head>
+<body>
+<div class="container">
+    <h1>404</h1>
+    <p>This is not the page you're looking for.</p>
+    <div id="timer"></div>
+    <pre>
+	$###############################################################$
+	#                      _    _           _   _                   #
+	#                     / \  | | ___ _ __| |_| |                  #
+	#                    / _ \ | |/ _ \ '__| __| |                  #
+	#                   / ___ \| |  __/ |  | |_|_|                  #
+	#                  /_/   \_\_|\___|_|   \__(_)                  #
+	#                                                               #
+	#            You are entering into a secured area!              #
+	#        Your ip, login details and username have been          #
+	#                 noted and sent to the admin.                  #
+	#          All further activities will be monitored.            #
+	#                       No pressure.                            #
+	#          Unauthorized access will be investigated.            #
+	#  Infringement will prosecuted to the full extent of the law.  #
+	$###############################################################$
+	</pre>
+
+</div>
+<script>
+        const timer = document.getElementById('timer');
+		let time = 10;
+		const countdown = setInterval(() => {
+			time--;
+			const percent = time / 100;
+			if (percent <= 0.3) {
+				timer.classList.remove('yellow');
+				timer.classList.remove('green');
+				timer.classList.add('red');
+			} else if (percent <= 0.6) {
+				timer.classList.remove('green');
+				timer.classList.remove('red');
+				timer.classList.add('yellow');
+			} else {
+				timer.classList.remove('red');
+				timer.classList.remove('yellow');
+				timer.classList.add('green');
+			}
+			timer.textContent = `Full trace usually takes ~${time} seconds..`;
+			if (time === 0) {
+				clearInterval(countdown);
+				timer.textContent = 'Thank you..';
+			}
+		}, 1000);
+	</script>
+</body>
+</html>

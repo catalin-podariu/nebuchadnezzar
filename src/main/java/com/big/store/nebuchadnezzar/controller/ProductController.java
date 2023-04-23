@@ -41,13 +41,13 @@ public class ProductController {
         return ResponseEntity.ok(modelMapper.map(productModel, Product.class));
     }
 
-    @PostMapping("/updateName/{id}")
+    @PatchMapping("/updateName/{id}")
     public ResponseEntity<Product> updateProductName(@PathVariable Long id, @RequestParam String name) {
         ProductModel productModel = productService.updateProductName(id, name);
         return ResponseEntity.ok(modelMapper.map(productModel, Product.class));
     }
 
-    @PostMapping("/updatePrice/{id}")
+    @PatchMapping("/updatePrice/{id}")
     public ResponseEntity<Product> updateProductPrice(@PathVariable Long id, @RequestParam BigDecimal price) {
         ProductModel productModel = productService.updateProductPrice(id, price);
         Product productDTO = modelMapper.map(productModel, Product.class);

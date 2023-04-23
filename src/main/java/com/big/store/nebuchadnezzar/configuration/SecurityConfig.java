@@ -1,5 +1,6 @@
 package com.big.store.nebuchadnezzar.configuration;
 
+import com.big.store.nebuchadnezzar.exception.AuthFailureHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -19,20 +20,28 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        AuthFailureHandler failureHandler = new AuthFailureHandler();
         http.authorizeHttpRequests((requests) -> requests
                         .requestMatchers(HttpMethod.GET,
                                 "/products/getAll",
                                 "/products/get/{id:[0-9]+}"
-                        ).permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/products/delete/{id:[0-9]+}").permitAll()
+                        ).hasRole("USER")
                         .requestMatchers(HttpMethod.POST,
-                                "/products/create",
+                                "/products/create"
+                        ).hasRole("USER")
+                        .requestMatchers(HttpMethod.PATCH,
                                 "/products/updateName/**",
-                                "/products/updatePrice/**",
-                                "/products/delete/**"
-                        ).permitAll()
-                        .requestMatchers("/products/**").hasRole("ADMIN")
+                                "/products/updatePrice/**"
+                        ).hasRole("USER")
+                        .requestMatchers(HttpMethod.DELETE,
+                                "/products/delete/{id:[0-9]+}"
+                        ).hasRole("ADMIN")
                         .anyRequest().authenticated()
+                )
+                .formLogin((form) -> form
+                        .loginPage("/login")
+                        .failureHandler(failureHandler) // Use the custom failure handler
+                        .permitAll()
                 )
                 .httpBasic()
                 .and()
@@ -56,6 +65,14 @@ public class SecurityConfig {
                 .roles("USER")
                 .build();
 
-        return new InMemoryUserDetailsManager(user);
+        UserDetails admin = users
+                .username("admin")
+                .password(PasswordEncoderFactories
+                        .createDelegatingPasswordEncoder()
+                        .encode("password"))
+                .roles("ADMIN")
+                .build();
+
+        return new InMemoryUserDetailsManager(user, admin);
     }
 }

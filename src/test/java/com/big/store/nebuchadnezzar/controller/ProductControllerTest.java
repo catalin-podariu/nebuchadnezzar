@@ -14,6 +14,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -30,7 +32,8 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest(ProductController.class)
-@WithMockUser(roles = "ADMIN")
+@ContextConfiguration
+@WithMockUser(username = "user", roles = {"USER", "ADMIN"})
 class ProductControllerTest {
 
     @Autowired
@@ -43,7 +46,7 @@ class ProductControllerTest {
     private ModelMapper modelMapper;
 
     @Test
-    void testGetProductByIdSuccess() throws Exception {
+    void test_GET_ProductByIdSuccess() throws Exception {
         // Arrange
         Long productId = 1L;
         ProductModel productModel = new ProductModel(productId, "Test Product", BigDecimal.valueOf(9.99));
@@ -66,7 +69,7 @@ class ProductControllerTest {
     }
 
     @Test
-    void testGetProductByIdNotFound() throws Exception {
+    void test_GET_ProductByIdNotFound() throws Exception {
         // Arrange
         Long productId = -1L;
         when(productService.getProductById(productId))
@@ -78,7 +81,7 @@ class ProductControllerTest {
     }
 
     @Test
-    void testGetAllProductsSuccess() throws Exception {
+    void test_GET_AllProductsSuccess() throws Exception {
         // Arrange
         List<ProductModel> productModels = new ArrayList<>();
         productModels.add(new ProductModel(1L, "Test Product 1", BigDecimal.valueOf(9.99)));
@@ -104,95 +107,94 @@ class ProductControllerTest {
                 .andReturn();
     }
 
-//    @Test
-//    @WithMockUser(roles = "ADMIN")
-//    void testCreateProductSuccess() throws Exception {
-//        // Arrange
-//        Product product = new Product(null, "Test Product", BigDecimal.valueOf(9.99));
-//        ProductModel productModel = new ProductModel(1001L, "Test Product", BigDecimal.valueOf(9.99));
-//
-//        when(productService.createProduct(any())).thenReturn(productModel);
-//        when(modelMapper.map(product, ProductModel.class)).thenReturn(productModel);
-//        when(modelMapper.map(productModel, Product.class)).thenReturn(new Product(1001L, "Test Product", BigDecimal.valueOf(9.99)));
-//
-//        // Act
-//        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/products/create")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content("{\"name\":\"Test Product\",\"price\":9.99}"))
-//                .andExpect(MockMvcResultMatchers.status().isOk())
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1001L))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Test Product"))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.price").value(9.99))
-//                .andReturn();
-//
-//        // Assert
-//        String responseString = result.getResponse().getContentAsString();
-//        assertThat(responseString).isEqualTo("{\"id\":1,\"name\":\"Test Product\",\"price\":9.99}");
-//    }
-//
-//    @Test
-//    @WithMockUser(roles = "ADMIN")
-//    void testUpdateProductNameSuccess() throws Exception {
-//        // Arrange
-//        Long productId = 1L;
-//        String newName = "New Test Product";
-//        ProductModel productModel = new ProductModel(productId, newName, BigDecimal.valueOf(9.99));
-//        Product expectedProduct = new Product(productId, newName, BigDecimal.valueOf(9.99));
-//
-//        when(productService.updateProductName(productId, newName)).thenReturn(productModel);
-//        when(modelMapper.map(productModel, Product.class)).thenReturn(expectedProduct);
-//
-//        // Act
-//        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/products/updateName/" + productId)
-//                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-//                        .param("name", newName))
-//                .andExpect(MockMvcResultMatchers.status().isOk())
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(productId))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(newName))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.price").value(9.99))
-//                .andReturn();
-//
-//        // Assert
-//        String responseString = result.getResponse().getContentAsString();
-//        assertThat(responseString).isEqualTo("{\"id\":1,\"name\":\"New Test Product\",\"price\":9.99}");
-//    }
-//
-//    @Test
-//    @WithMockUser(roles = "ADMIN")
-//    void testUpdateProductPriceSuccess() throws Exception {
-//        // Arrange
-//        Long productId = 1L;
-//        BigDecimal newPrice = BigDecimal.valueOf(19.99);
-//        ProductModel productModel = new ProductModel(productId, "Test Product", newPrice);
-//        Product expectedProduct = new Product(productId, "Test Product", newPrice);
-//
-//        when(productService.updateProductPrice(productId, newPrice)).thenReturn(productModel);
-//        when(modelMapper.map(productModel, Product.class)).thenReturn(expectedProduct);
-//
-//        // Act
-//        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/products/updatePrice/" + productId)
-//                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-//                        .param("price", "19.99"))
-//                .andExpect(MockMvcResultMatchers.status().isOk())
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(productId))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Test Product"))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.price").value(19.99))
-//                .andReturn();
-//
-//        // Assert
-//        String responseString = result.getResponse().getContentAsString();
-//        assertThat(responseString).isEqualTo("{\"id\":1,\"name\":\"Test Product\",\"price\":19.99}");
-//    }
-//
-//    @Test
-//    @WithMockUser(roles = "ADMIN")
-//    void testDeleteProductSuccess() throws Exception {
-//        // Arrange
-//        long productId = 1L;
-//
-//        // Act
-//        mockMvc.perform(MockMvcRequestBuilders.delete("/products/delete/" + productId))
-//                .andExpect(MockMvcResultMatchers.status().isNoContent())
-//                .andExpect(MockMvcResultMatchers.content().string(""));
-//    }
+    @Test
+    void test_POST_CreateProductSuccess() throws Exception {
+        // Arrange
+        Product product = new Product(null, "Test Product", BigDecimal.valueOf(9.99));
+        ProductModel productModel = new ProductModel(1001L, "Test Product", BigDecimal.valueOf(9.99));
+
+        when(productService.createProduct(any())).thenReturn(productModel);
+        when(modelMapper.map(product, ProductModel.class)).thenReturn(productModel);
+        when(modelMapper.map(productModel, Product.class)).thenReturn(new Product(1001L, "Test Product", BigDecimal.valueOf(9.99)));
+
+        // Act
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/products/create")
+                        .with(SecurityMockMvcRequestPostProcessors.httpBasic("user", "password"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"Test Product\",\"price\":9.99}"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1001L))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Test Product"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.price").value(9.99))
+                .andReturn();
+
+        // Assert
+        String responseString = result.getResponse().getContentAsString();
+        assertThat(responseString).isEqualTo("{\"id\":1,\"name\":\"Test Product\",\"price\":9.99}");
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void test_PATCH_UpdateProductNameSuccess() throws Exception {
+        // Arrange
+        Long productId = 1L;
+        String newName = "New Test Product";
+        ProductModel productModel = new ProductModel(productId, newName, BigDecimal.valueOf(9.99));
+        Product expectedProduct = new Product(productId, newName, BigDecimal.valueOf(9.99));
+
+        when(productService.updateProductName(productId, newName)).thenReturn(productModel);
+        when(modelMapper.map(productModel, Product.class)).thenReturn(expectedProduct);
+
+        // Act
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.patch("/products/updateName/" + productId)
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("name", newName))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(productId))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(newName))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.price").value(9.99))
+                .andReturn();
+
+        // Assert
+        String responseString = result.getResponse().getContentAsString();
+        assertThat(responseString).isEqualTo("{\"id\":1,\"name\":\"New Test Product\",\"price\":9.99}");
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void test_PATCH_UpdateProductPriceSuccess() throws Exception {
+        // Arrange
+        Long productId = 1L;
+        BigDecimal newPrice = BigDecimal.valueOf(19.99);
+        ProductModel productModel = new ProductModel(productId, "Test Product", newPrice);
+        Product expectedProduct = new Product(productId, "Test Product", newPrice);
+
+        when(productService.updateProductPrice(productId, newPrice)).thenReturn(productModel);
+        when(modelMapper.map(productModel, Product.class)).thenReturn(expectedProduct);
+
+        // Act
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.patch("/products/updatePrice/" + productId)
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("price", "19.99"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(productId))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Test Product"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.price").value(19.99))
+                .andReturn();
+
+        // Assert
+        String responseString = result.getResponse().getContentAsString();
+        assertThat(responseString).isEqualTo("{\"id\":1,\"name\":\"Test Product\",\"price\":19.99}");
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void test_DELETE_DeleteProductSuccess() throws Exception {
+        // Arrange
+        long productId = 1L;
+        // Act
+        mockMvc.perform(MockMvcRequestBuilders.delete("/products/delete/" + productId))
+                .andExpect(MockMvcResultMatchers.status().isNoContent())
+                .andExpect(MockMvcResultMatchers.content().string(""));
+    }
 }
