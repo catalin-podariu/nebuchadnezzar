@@ -17,28 +17,32 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<?> handleProductNotFoundException(ProductNotFoundException exception) {
-        ExceptionDetails errorDetails = new ExceptionDetails(LocalDateTime.now(), exception.getMessage(), HttpStatus.NOT_FOUND.value());
+        ExceptionDetails errorDetails = new ExceptionDetails(LocalDateTime.now(),
+                exception.getMessage(), HttpStatus.NOT_FOUND.value());
         logger.error("ProductNotFoundException was thrown {} -- {}", exception, errorDetails.toString());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException exception) {
-        ExceptionDetails errorDetails = new ExceptionDetails(LocalDateTime.now(), exception.getMessage(), HttpStatus.BAD_REQUEST.value());
+        ExceptionDetails errorDetails = new ExceptionDetails(LocalDateTime.now(),
+                exception.getMessage(), HttpStatus.BAD_REQUEST.value());
         logger.error("IllegalArgumentException was thrown {} -- {}", exception, errorDetails.toString());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<?> handleNotFoundException(NoHandlerFoundException exception) {
-        ExceptionDetails errorDetails = new ExceptionDetails(LocalDateTime.now(), "This is not the page you're looking for.", HttpStatus.NOT_FOUND.value());
+        ExceptionDetails errorDetails = new ExceptionDetails(LocalDateTime.now(),
+                "This is not the page you're looking for.", HttpStatus.NOT_FOUND.value());
         logger.error("NotFoundException was thrown {} -- {}", exception, errorDetails.toString());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleException(Exception exception) {
-        ExceptionDetails errorDetails = new ExceptionDetails(LocalDateTime.now(), exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
+        ExceptionDetails errorDetails = new ExceptionDetails(LocalDateTime.now(),
+                exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
         logger.error("Exception was thrown {} -- {}", exception, errorDetails.toString());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorDetails);
     }

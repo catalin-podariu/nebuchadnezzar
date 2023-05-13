@@ -20,7 +20,7 @@ public class ProductService {
     }
 
     public ProductModel getProductById(Long id) {
-        return findById(id);
+        return findProductById(id);
     }
 
     public List<ProductModel> getAllProducts() {
@@ -31,26 +31,66 @@ public class ProductService {
     }
 
     public ProductModel updateProductName(Long id, String name) {
-        ProductModel productModel = findById(id);
+        ProductModel productModel = findProductById(id);
         productModel.setName(name);
         return productRepository.save(productModel);
     }
 
+    public ProductModel updateProduct(Long id, ProductModel productModel) {
+        ProductModel product = findProductById(id);
+        product.setName(productModel.getName());
+        product.setPrice(productModel.getPrice());
+        product.setStock(productModel.getStock());
+        product.setDescription(productModel.getDescription());
+        product.setImage(productModel.getImage());
+        return productRepository.save(product);
+    }
+
     public ProductModel updateProductPrice(Long id, BigDecimal price) {
-        ProductModel productModel = findById(id);
+        ProductModel productModel = findProductById(id);
         productModel.setPrice(price);
         return productRepository.save(productModel);
     }
 
     public void deleteProduct(Long id) {
-        productRepository.delete(findById(id));
+        productRepository.delete(findProductById(id));
     }
 
-    private ProductModel findById(Long id) {
+    private ProductModel findProductById(Long id) {
         Optional<ProductModel> productOptional = productRepository.findById(id);
         if (productOptional.isEmpty()) {
             throw new ProductNotFoundException(ErrorCode.PRODUCT_NOT_FOUND, "Product not found with id: " + id);
         }
         return productOptional.get();
+    }
+
+    public ProductModel updateProductStock(Long id, Integer stock) {
+        ProductModel productModel = findProductById(id);
+        productModel.setStock(stock);
+        return productRepository.save(productModel);
+    }
+
+    public ProductModel updateProductDescription(Long id, String description) {
+        ProductModel productModel = findProductById(id);
+        productModel.setDescription(description);
+        return productRepository.save(productModel);
+    }
+
+    public ProductModel updateProductImage(Long id, String image) {
+        ProductModel productModel = findProductById(id);
+        productModel.setImage(image);
+        return productRepository.save(productModel);
+    }
+
+    public ProductModel updateProductCategory(Long id, String category) {
+        ProductModel productModel = findProductById(id);
+        productModel.setCategory(category);
+        return productRepository.save(productModel);
+    }
+
+    public ProductModel updateProductBrand(Long id, String brand) {
+        ProductModel productModel = findProductById(id);
+        productModel.setBrand(brand);
+        return productRepository.save(productModel);
     }
 }

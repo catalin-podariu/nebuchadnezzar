@@ -35,9 +35,16 @@ public class ProductController {
                 .collect(Collectors.toList()));
     }
 
-    @PostMapping("/create")
+    @PostMapping("/createProduct")
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         ProductModel productModel = productService.createProduct(modelMapper.map(product, ProductModel.class));
+        return ResponseEntity.ok(modelMapper.map(productModel, Product.class));
+    }
+
+    // put mapping updateProduct that includes all fields
+    @PutMapping("/updateProduct/{id}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
+        ProductModel productModel = productService.updateProduct(id, modelMapper.map(product, ProductModel.class));
         return ResponseEntity.ok(modelMapper.map(productModel, Product.class));
     }
 
@@ -45,6 +52,13 @@ public class ProductController {
     public ResponseEntity<Product> updateProductName(@PathVariable Long id, @RequestParam String name) {
         ProductModel productModel = productService.updateProductName(id, name);
         return ResponseEntity.ok(modelMapper.map(productModel, Product.class));
+    }
+
+    @PatchMapping("/updateStock/{id}")
+    public ResponseEntity<Product> updateProductStock(@PathVariable Long id, @RequestParam Integer stock) {
+        ProductModel productModel = productService.updateProductStock(id, stock);
+        Product productDTO = modelMapper.map(productModel, Product.class);
+        return ResponseEntity.ok(productDTO);
     }
 
     @PatchMapping("/updatePrice/{id}")
